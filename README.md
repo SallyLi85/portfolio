@@ -1,4 +1,8 @@
-# protofolio
+# Welcome
 
-Hi welcome
-You can see the projects I've done in this repository
+Here you can find my projects about data visualization, data analysis, and data modeling (with PostgresSQL)
+
+
+## 📫 Contact
+- **Email:** [sallyli3318@gmail.com]
+- **LinkedIn:** [https://www.linkedin.com/in/xiaoyang-sally-li/]
