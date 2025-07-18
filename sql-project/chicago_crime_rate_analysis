@@ -1,1 +1,136 @@
+-- =====================================================
+-- Chicago Crime Data Analysis
+-- =====================================================
+-- This script demonstrates database design, data manipulation, and analytical queries for Chicago crime data analysis
+-- =====================================================
 
+-- =====================================================
+-- 1. DATABASE SCHEMA CREATION
+-- =====================================================
+
+-- Create entity tables
+CREATE TABLE Crime_type (IUCR INT PRIMARY KEY, primarytype TEXT);
+
+CREATE TABLE location (beat INT PRIMARY KEY, district INT);
+
+CREATE TABLE Time (Crimedate TEXT PRIMARY KEY);
+
+CREATE TABLE Crime_record
+(CrimeID INT PRIMARY KEY, 
+casenumber INT, 
+IUCR INT, 
+Arrest TEXT, 
+crimedate TEXT, 
+beat INT,
+FOREIGN KEY (IUCR) REFERENCES Crime_type (iucr), 
+FOREIGN KEY (beat) REFERENCES location(beat),
+FOREIGN KEY (crimedate) REFERENCES Time(crimedate));
+
+-- =====================================================
+-- 2. DATA POPULATION
+-- =====================================================
+
+-- location
+INSERT OR IGNORE INTO location(beat, district) SELECT beat, district FROM crime_clean;
+
+-- Time
+INSERT INTO Time (crimedate) SELECT DISTINCT Crimedate FROM crime_clean;
+ 
+-- type
+INSERT OR IGNORE INTO Crime_type (IUCR, primarytype) SELECT DISTINCT iucr, primarytype FROM crime_clean;
+ 
+-- crime record
+INSERT INTO Crime_record (CrimeID, casenumber, IUCR, Arrest, crimedate, beat) SELECT DISTINCT 
+CrimeID, casenumber, iucr, arrest, Crimedate, beat FROM Crime_clean;
+
+-- =====================================================
+-- 3. TRIGGERS AND LOGGING
+-- =====================================================
+
+-- trigger before inserting data to crimerecord table
+CREATE TABLE newentry_log ("LogID" INTEGER PRIMARY KEY AUTOINCREMENT, "CrimeID" INTEGER, "Date/Time"  TEXT, "Operation" TEXT);
+
+CREATE TRIGGER Newentry AFTER INSERT ON crime_tmp
+BEGIN 
+INSERT INTO newentry_log ("CrimeID", "Date/Time", "Operation") VALUES (NEW.CrimeID, datetime(), "INSERT NEW CRIME RECORD");
+END;
+
+-- trigger test
+INSERT INTO crime_tmp VALUES 
+(1234567,
+ "JK23456",
+ "09-09-2030", 
+ "34", 
+ 3,
+4,
+5,
+ "type",
+ "block",
+ 678,
+ "this is description",
+ "another description",
+ "last description",
+"yes",
+9,
+56,
+34.56,
+89.67,
+"location");
+
+SELECT * FROM newentry_log;
+
+-- trigger to prevent data deletion
+CREATE TRIGGER Perventcrimerecorddeletion BEFORE DELETE ON crime_tmp
+BEGIN
+SELECT RAISE (ABORT, "YOU CANNOT DELE DATA IN THIS DATA BASE");
+END;
+
+-- test for deletion prevention trigger
+DELETE FROM crimes_tmp WHERE CrimeID = 1234567;
+
+-- =====================================================
+-- 4. PERFORMANCE OPTIMIZATION
+-- =====================================================
+
+-- for accleate the query spped between these two variables - question1
+CREATE INDEX idx_crime_location ON Crime_record(CrimeID, beat);
+
+CREATE VIEW geo AS
+SELECT * FROM location JOIN Crime_record ON location.beat = Crime_record.beat;
+
+SELECT beat, district, count(*) number FROM geo GROUP BY beat ORDER BY number DESC;
+
+-- examination of index
+EXPLAIN QUERY PLAN SELECT beat, count(*) AS number FROM geo GROUP BY beat ORDER BY number DESC;
+
+-- =====================================================
+-- 5. ARREST RATE ANALYSIS
+-- =====================================================
+
+UPDATE Crime_record SET Arrest = "0" WHERE Arrest = "FALSE";
+UPDATE Crime_record SET Arrest = "1" WHERE Arrest = "TRUE";
+
+CREATE VIEW arrest_rate AS
+SELECT IUCR, round(avg(Arrest),2) AS "arrest rate" FROM Crime_record GROUP BY IUCR ORDER BY "arrest rate" ASC;
+
+CREATE VIEW crime_number_by_type AS
+SELECT IUCR, count(*) AS number FROM Crime_record GROUP BY IUCR ORDER BY number DESC;
+
+CREATE VIEW popular_crime_arrest_rate AS
+SELECT * FROM crime_number_by_type INNER JOIN arrest_rate ON crime_number_by_type.IUCR = arrest_rate.IUCR;
+
+SELECT IUCR, number, "arrest rate",  
+DENSE_RANK() OVER (
+    ORDER BY number DESC)  a
+AS 'rank' FROM popular_crime_arrest_rate;
+
+-- =====================================================
+-- 6. TIME-BASED ANALYSIS
+-- =====================================================
+
+CREATE VIEW crime_time_trend AS SELECT Crime_record.CrimeID, Crime_record.crimedate FROM Crime_record
+JOIN Time ON Crime_record.crimedate = Time.Crimedate;
+
+SELECT crimedate, count(*) AS number FROM crime_time_trend GROUP BY crimedate;
+
+SELECT crimedate, count(*) AS number FROM crime_time_trend WHERE strftime('%Y', crimedate) IS '2020' GROUP BY crimedate;
