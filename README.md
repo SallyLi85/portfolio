@@ -1,7 +1,6 @@
 # Welcome
 
-Here you can find my projects about data visualization, data analysis, and data modeling (with PostgresSQL)
-
+Here you can find my projects about data visualization, data analysis, and data modeling (with PostgreSQL and Google BigQuery)
 
 ## 📫 Contact
 - **Email:** [sallyli3318@gmail.com]
