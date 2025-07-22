@@ -1,7 +1,5 @@
 # Business Tweets Text analysis and mining
-Project background: This is a project I've worked on with a focus on non-structured (text data in this project) data analysis and its potential business implications. In this project, I applied multiple non-structured data processing methods, such as text splitting and lemmatization. And the application of data encryption is a good practice of how to work with sensitive/personal data. 
-
-I used Tableau for data visualization in this project, and relevant graphs will be shown in this document.
+Project background: This is a project I've worked on, with a focus on **<ins>non-structured<ins>** (text data in this project) data analysis. In this project, I applied multiple non-structured data processing methods and statistical modelling to understand the underlined patterns of the data. The application of **<ins>data encryption<ins>** is a good practice on how to work with sensitive/personal data. I used **<ins>Tableau<ins>** for data visualization in this project, and the relevant graphs are shown in this document.
 
 ## 1.Load required libraries and set up work directory
 Load the necessary Python libraries required for the following analysis, and set up the work directory for this project so that all relevant analyses will be stored in the project folder.
