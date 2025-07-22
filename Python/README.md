@@ -37,4 +37,4 @@ By visualizing customer churn data and its tweet engagement data for the same ti
 <img width="400" height="280" alt="image" src="https://github.com/user-attachments/assets/6928e838-fd5d-4ef4-8efc-88376c85b74f" />
 
 ## 7.Business innovative area exploration
-By doing frequency analysis on pre-processed text data, one innovation area was identified - **Recycling**. It shows that this is an area/aspect that their customer pays attention. It indicates the business that a more relevant budget might be needed to allocate to recycling-related projects to increase customer retation rate and gain brand loyalty.
+By doing frequency analysis on pre-processed text data, one innovation area was identified - **Charity**. It shows that this is an area/aspect that their customer pays attention. It indicates the business that more budget might be needed to allocate to relevant projects to increase customer retation rate and gain brand loyalty.
